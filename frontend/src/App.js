@@ -1,9 +1,13 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { Box, TextField } from "@mui/material";
+import { Box, Grid, Paper, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Stack } from "@mui/system";
 import { useState } from "react";
+import Header from "./components/Header";
+import GridItem from "./components/GridItem";
+import Form from "./components/Form";
+import StickyHeadTable from "./components/Table";
 
 function App() {
   const [form, setForm] = useState({
@@ -16,7 +20,6 @@ function App() {
     const name = e.target.name;
     setForm((prevState) => ({ ...prevState, [name]: value }));
   };
-
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -32,26 +35,22 @@ function App() {
   };
 
   return (
-    <Box sx={{ padding: 10 }}>
-      <form onSubmit={onSubmit}>
-        <Stack spacing={2}>
-          <TextField
-            label="Title"
-            name="title"
-            value={form.title}
-            onChange={handleFormChange}
-          />
-          <TextField
-            label="Url"
-            name="url"
-            value={form.url}
-            onChange={handleFormChange}
-          />
-          <LoadingButton variant="contained" type="submit">
-            Save
-          </LoadingButton>
-        </Stack>
-      </form>
+    <Box sx={{ height: "100vh", background: "#F2f2f2" }}>
+      <Header />
+      <Box sx={{ height: "93vh" }}>
+        <Grid container spacing={2} sx={{ px: 10, py: 5, height: "100%" }}>
+          <GridItem>
+            <Form />
+          </GridItem>
+          <GridItem>
+            <Box padding={2}>
+              <Typography variant="h5">List my links</Typography>
+              <StickyHeadTable />
+            </Box>
+          </GridItem>
+          <GridItem>ChatRoom</GridItem>
+        </Grid>
+      </Box>
     </Box>
   );
 }
