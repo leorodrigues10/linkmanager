@@ -14,7 +14,7 @@ const Item = styled(Paper)(({ theme }) => ({
 function GridItem({ children }) {
   return (
     <Grid item xs={12} md={6}>
-        <Item>{children}</Item>
+       {children}
     </Grid>
   );
 }

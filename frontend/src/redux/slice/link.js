@@ -43,16 +43,16 @@ export const retrieveLink = createAsyncThunk('retrieve/link', async ({id}, {reje
     try {
         const response = await axiosInstance.get(`links/${id}`);
         return response.data;
-    } catch(e) {
+    } catch (e) {
         return rejectWithValue(e)
     }
 })
 
 
-
 const initialState = {
     links: [],
     isSubmitting: false,
+    isDeleting: false
 };
 
 const slice = createSlice({
@@ -75,6 +75,16 @@ const slice = createSlice({
             const {data} = action.payload
             state.links = data;
         },
+        [deleteLinks.pending]: (state) => {
+            state.isDeleting = true;
+        },
+        [deleteLinks.fulfilled]: (state, action) => {
+            state.isDeleting = false;
+        },
+        [deleteLinks.rejected]: (state) => {
+            state.isDeleting = false;
+        },
+
     },
 });
 
