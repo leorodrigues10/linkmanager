@@ -1,5 +1,3 @@
-import logo from "./logo.svg";
-import "./App.css";
 import { Box, Grid, Paper, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Stack } from "@mui/system";
@@ -13,8 +11,6 @@ import { addLink, getLinks } from "./redux/slice/link";
 import { useEffect } from "react";
 
 function App() {
-  const dispatch = useDispatch();
-
   return (
     <Box sx={{ height: "100vh", background: "#F2f2f2" }}>
       <Header />

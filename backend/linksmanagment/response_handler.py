@@ -21,7 +21,7 @@ class ResponseHandler():
     def not_found():
         return {
             "status": False,
-            "message": "Recurso não encontrado",
+            "message": "Link não encontrado",
             "data": None,
             "errors": None
         }

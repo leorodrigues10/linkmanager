@@ -17,6 +17,7 @@ class LinkAPI(ViewSet):
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
     def retrieve(self, request, pk):
         try:
             try:
@@ -29,6 +30,7 @@ class LinkAPI(ViewSet):
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
     def create(self, request):
         try:
             serializer = LinkSerializer(data=request.data)
@@ -38,6 +40,7 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(serializer.errors), status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_error)
+
 
     def update(self, request, pk):
         try:
@@ -55,6 +58,7 @@ class LinkAPI(ViewSet):
 
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_error)
+
 
     def delete(self, request, pk):
         try:
