@@ -3,7 +3,7 @@ import linkSlice from './slice/link'
 
 
 const rootReducer = combineReducers({
-   links: linkSlice
+   link: linkSlice
 })
 
 export { rootReducer }

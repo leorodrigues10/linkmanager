@@ -8,31 +8,12 @@ import Header from "./components/Header";
 import GridItem from "./components/GridItem";
 import Form from "./components/Form";
 import StickyHeadTable from "./components/Table";
+import { useDispatch } from "react-redux";
+import { addLink, getLinks } from "./redux/slice/link";
+import { useEffect } from "react";
 
 function App() {
-  const [form, setForm] = useState({
-    title: "",
-    url: "",
-  });
-
-  const handleFormChange = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    setForm((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    fetch("http://localhost:8000/links/", {
-      method: "POST",
-      headers: { "content-Type": "application/json" },
-      body: JSON.stringify(form),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
-  };
+  const dispatch = useDispatch();
 
   return (
     <Box sx={{ height: "100vh", background: "#F2f2f2" }}>
@@ -48,7 +29,6 @@ function App() {
               <StickyHeadTable />
             </Box>
           </GridItem>
-          <GridItem>ChatRoom</GridItem>
         </Grid>
       </Box>
     </Box>
