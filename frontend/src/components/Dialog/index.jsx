@@ -31,7 +31,6 @@ export default function AlertDialogSlide({open, setOpen, link}) {
                 handleClose()
             })
             .catch(error => {
-                console.log(error);
                 toast.error(error.response.data.message);
                 handleClose()
             })

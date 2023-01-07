@@ -1,15 +1,16 @@
 import {LoadingButton} from "@mui/lab";
 import {Box, Divider, TextField, Typography, useTheme} from "@mui/material";
 import {Stack} from "@mui/system";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addLink} from "../../redux/slice/link";
+import {addLink, resetLink, updateLink} from "../../redux/slice/link";
 import {toast} from "react-toastify";
+import Button from "@mui/material/Button";
 
 function Form() {
     const theme = useTheme()
     const dispatch = useDispatch();
-    const {isSubmitting} = useSelector((state) => state.link);
+    const {isSubmitting, update, link} = useSelector((state) => state.link);
 
     const [form, setForm] = useState({
         title: "",
@@ -25,19 +26,53 @@ function Form() {
     const onSubmit = async (e) => {
         e.preventDefault();
 
-        dispatch(addLink({data: form}))
-            .unwrap()
-            .then((res) => {
-                toast.success("Operation performed sucessfully");
-                setForm({
-                    title: "",
-                    url: "",
+        if (update) {
+            dispatch(updateLink({data: form, id: link.id}))
+                .unwrap()
+                .then((res) => {
+                    toast.success(res.message);
+                    dispatch(resetLink())
+                    setForm({
+                        title: "",
+                        url: "",
+                    });
+                })
+                .catch((error) => {
+                    toast.error(error.response.data.message);
                 });
-            })
-            .catch((err) => {
-                toast.error("Operation cannot be performed");
-            });
+        } else {
+            dispatch(addLink({data: form}))
+                .unwrap()
+                .then((res) => {
+                    toast.success(res.message);
+                    setForm({
+                        title: "",
+                        url: "",
+                    });
+
+                })
+                .catch((error) => {
+                    toast.error(error.response.data.message);
+                });
+        }
+
+
     };
+
+
+    useEffect(() => {
+        if (link) {
+            setForm({
+                title: link.title,
+                url: link.url
+            })
+        } else {
+            setForm({
+                title: '',
+                url: ''
+            })
+        }
+    }, [link]);
 
     return (
         <Box sx={{p: 2}}>
@@ -47,7 +82,7 @@ function Form() {
                 </Typography>
                 <Stack spacing={2}>
                     <TextField
-                        style={{ color: "#b5b5b5" }}
+                        style={{color: "#b5b5b5"}}
                         fullWidth
                         label="Título"
                         variant="filled"
@@ -60,10 +95,21 @@ function Form() {
                         label="Url"
                         variant="filled"
                         name="url"
-                        style={{ color: "#b5b5b5" }}
+                        style={{color: "#b5b5b5"}}
                         value={form.url}
                         onChange={handleFormChange}
                     />
+                    {
+                        update && <Button
+                            variant="text"
+                            type="submit"
+                            color="secondary"
+                            onClick={() => dispatch(resetLink())}
+                        >
+                            Cancelar
+                        </Button>
+                    }
+
                     <LoadingButton
                         loading={isSubmitting}
                         variant="contained"
@@ -81,7 +127,7 @@ function Form() {
                 </Typography>
                 <Stack spacing={2}>
                     <TextField
-                        style={{ color: "#b5b5b5" }}
+                        style={{color: "#b5b5b5"}}
                         fullWidth
                         label="Url"
                         variant="filled"
@@ -95,12 +141,11 @@ function Form() {
                         variant="contained"
                         type="submit"
                         color="secondary"
-                        >
+                    >
                         Start
                     </LoadingButton>
                 </Stack>
             </form>
-
 
 
         </Box>

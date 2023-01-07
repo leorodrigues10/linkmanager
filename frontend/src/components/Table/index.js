@@ -8,8 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteLinks, getLinks} from "../../redux/slice/link";
-import {IconButton, Tooltip} from "@mui/material";
+import {deleteLinks, getLink, getLinks, resetLink} from "../../redux/slice/link";
+import {IconButton, Tooltip, Typography} from "@mui/material";
 import {
     EditRounded,
     DeleteRounded,
@@ -73,17 +73,24 @@ export default function StickyHeadTable() {
                                 return (
                                     <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                                         <TableCell sx={{width: "80%"}} key={row.id}>
-                                            {row.title}
+                                            <Typography style={{color: "#4d4d4d"}}>
+                                                {row.title}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
                                             <Stack direction="row">
                                                 <Tooltip title="Open in new window">
-                                                    <IconButton>
+                                                    <IconButton onClick={() => {
+                                                        window.open(row.url, '_blank')
+
+                                                    }}>
                                                         <OpenInNewRounded/>
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Tooltip title="Edit">
-                                                    <IconButton>
+                                                    <IconButton onClick={() => {
+                                                        dispatch(getLink(row))
+                                                    }}>
                                                         <EditRounded sx={{color: "green"}}/>
                                                     </IconButton>
                                                 </Tooltip>
@@ -92,6 +99,7 @@ export default function StickyHeadTable() {
                                                         onClick={() => {
                                                             setLink(row)
                                                             setOpen(true)
+                                                            dispatch(resetLink())
                                                         }
                                                         }
                                                     >

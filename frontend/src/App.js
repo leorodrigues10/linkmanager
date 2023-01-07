@@ -9,14 +9,14 @@ function App() {
     return (
         <Box sx={{height: "100vh", background: "#F2f2f2"}}>
             <Header/>
-            <Grid container alignItems='center' spacing={2} sx={{px: 10, py: 5}}>
+            <Grid container spacing={2} sx={{px: 10, py: 5}}>
                 <Grid item xs={12} lg={3}>
                     <Form/>
                 </Grid>
                 <Grid item xs={12} lg={5}>
                     <Box padding={2}>
-                        <Typography variant="h5">List my links</Typography>
-                        <StickyHeadTable/>
+                        <Typography sx={{mb: 1}} variant="h5">List my links</Typography>
+                        <StickyHeadTable />
                     </Box>
                 </Grid>
             </Grid>

@@ -1,15 +1,19 @@
-from rest_framework.decorators import api_view
+import requests
+import re
+from rest_framework.decorators import api_view, action
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Link
+from .utils import simple_crawl, crawl_with_scroll
 from .serializers import LinkSerializer
 from linksmanagment.response_handler import ResponseHandler
 
 
 class LinkAPI(ViewSet):
 
-    def list(self, request):
+    @staticmethod
+    def list(request):
         try:
             links = Link.objects.all()
             serializer = LinkSerializer(links, many=True)
@@ -17,8 +21,8 @@ class LinkAPI(ViewSet):
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    def retrieve(self, request, pk):
+    @staticmethod
+    def retrieve(request, pk):
         try:
             try:
                 link = Link.objects.get(id=pk)
@@ -30,8 +34,8 @@ class LinkAPI(ViewSet):
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    def create(self, request):
+    @staticmethod
+    def create(request):
         try:
             serializer = LinkSerializer(data=request.data)
             if serializer.is_valid():
@@ -39,10 +43,10 @@ class LinkAPI(ViewSet):
                 return Response(ResponseHandler.success(serializer.data), status.HTTP_201_CREATED)
             return Response(ResponseHandler.error(serializer.errors), status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(ResponseHandler.error(None), status.HTTP_500_error)
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    def update(self, request, pk):
+    @staticmethod
+    def update(request, pk):
         try:
             try:
                 link = Link.objects.get(id=pk)
@@ -57,10 +61,10 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(serializer.errors), status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response(ResponseHandler.error(None), status.HTTP_500_error)
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    def delete(self, request, pk):
+    @staticmethod
+    def delete(request, pk):
         try:
             try:
                 link = Link.objects.get(id=pk)
@@ -70,4 +74,17 @@ class LinkAPI(ViewSet):
 
             return Response(ResponseHandler.success(None), status.HTTP_200_OK)
         except Exception as e:
-            return Response(ResponseHandler.error(None), status.HTTP_500_error)
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @staticmethod
+    @action(methods=['POST'], detail=False)
+    def crawl(request):
+        try:
+            print(request.data['crawl_with_scroll'])
+            if request.data['crawl_with_scroll']:
+                links = crawl_with_scroll('https://dev.to/t/security')
+            else:
+                links = simple_crawl('https://dev.to/t/security')
+            return Response(ResponseHandler.success(links), status.HTTP_200_OK)
+        except Exception as e:
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
