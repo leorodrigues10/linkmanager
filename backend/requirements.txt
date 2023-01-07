@@ -5,3 +5,5 @@ requests==2.28.1
 django-cors-headers==3.13.0
 selenium==4.7.2
 bs4==0.0.1
+channels[daphne]==4.0.0
+channels_redis==4.0.0

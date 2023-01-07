@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Link
-from .utils import simple_crawl, crawl_with_scroll
+from .utils import simple_crawl, crawl_with_scroll, crawl_tags
 from .serializers import LinkSerializer
 from linksmanagment.response_handler import ResponseHandler
 
@@ -80,11 +80,22 @@ class LinkAPI(ViewSet):
     @action(methods=['POST'], detail=False)
     def crawl(request):
         try:
-            print(request.data['crawl_with_scroll'])
+            
             if request.data['crawl_with_scroll']:
                 links = crawl_with_scroll('https://dev.to/t/security')
             else:
                 links = simple_crawl('https://dev.to/t/security')
             return Response(ResponseHandler.success(links), status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @staticmethod
+    @action(methods=['POST'], detail=False)
+    def tags(request):
+        try:
+            tags = crawl_tags()
+            return Response(ResponseHandler.success(tags), status.HTTP_200_OK)
+        except Exception as e:
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
+

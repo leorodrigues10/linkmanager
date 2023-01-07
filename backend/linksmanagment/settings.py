@@ -25,13 +25,14 @@ SECRET_KEY = 'django-insecure-v_-1f&=ay&!r#^6n__*r2z+(@gc0r@a#scoego)ng0dvo%x1=z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,7 +74,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'linksmanagment.wsgi.application'
+# WSGI_APPLICATION = 'linksmanagment.wsgi.application'
+ASGI_APPLICATION = 'linksmanagment.asgi.application'
 
 
 # Database
@@ -88,6 +90,18 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '',
     }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        # Method 1: Via redis lab
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [
+                'redis://default:JLBrtneIvPLAuql5xGJyOVRsPU2iSVaM@redis-14439.c251.east-us-mz.azure.cloud.redislabs.com:14439'
+            ],
+        },
+    },
 }
 
 
