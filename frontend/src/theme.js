@@ -28,7 +28,7 @@ export const theme = createTheme(
                     styleOverrides: {
                         root: {
                             borderRadius: 4,
-                            backgroundColor: "white",
+                            backgroundColor: "#F2F2F2",
                             // ".MuiFilledInput-input": {
                             //   borderRadius: 16,
                             // }
@@ -56,9 +56,8 @@ export const theme = createTheme(
                     color: "#5198BF",
                 },
                 h3: {
-                    fontSize: "48px",
+                    fontSize: "36px",
                     lineHeight: 1,
-                    color: "#fff",
                 },
                 h4: {
                     fontSize: "34px",

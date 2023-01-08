@@ -8,12 +8,14 @@ from .models import Link
 from .utils import simple_crawl, crawl_with_scroll, crawl_tags
 from .serializers import LinkSerializer
 from linksmanagment.response_handler import ResponseHandler
+from rest_framework.permissions import IsAuthenticated
 
 
 class LinkAPI(ViewSet):
-
+    permission_classes = [IsAuthenticated]
     @staticmethod
     def list(request):
+        print(request.user)
         try:
             links = Link.objects.all()
             serializer = LinkSerializer(links, many=True)

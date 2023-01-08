@@ -7,12 +7,11 @@ from selenium.webdriver.chrome.options import Options
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-options = Options()
-options.headless = True
-driver = webdriver.Chrome(options=options)
+
 prefix = 'https://dev.to'
 
 channel_layer = get_channel_layer()
+
 
 def simple_crawl(url):
     response = requests.get(url)
@@ -20,6 +19,9 @@ def simple_crawl(url):
 
 
 def crawl_with_scroll(url):
+    options = Options()
+    options.headless = True
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
     time.sleep(2)
 
@@ -28,16 +30,17 @@ def crawl_with_scroll(url):
 
     i = 1
     while True:
-        driver.execute_script(f'window.scrollTo(0, {screen_height}*{i * 100});')
+        driver.execute_script(f'window.scrollTo(0, {screen_height}*{i * 20});')
         i += 1
 
         time.sleep(scroll_pause_time)
         scroll_height = driver.execute_script('return document.body.scrollHeight;')
-        
-        if i == 100 or screen_height * i > scroll_height:
+        print(i)
+        if i == 10 or screen_height * i > scroll_height:
             break
-
-    return _scrapy(driver.page_source)
+    page_source = driver.page_source
+    driver.quit()
+    return _scrapy(page_source)
 
 
 def crawl_tags():
@@ -93,5 +96,5 @@ def _scrapy(content):
                     }
             }
         )
-
+    print(len(links))
     return links
