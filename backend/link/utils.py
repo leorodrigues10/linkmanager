@@ -30,14 +30,25 @@ def crawl_with_scroll(url):
 
     i = 1
     while True:
-        driver.execute_script(f'window.scrollTo(0, {screen_height}*{i * 20});')
+        driver.execute_script(f'window.scrollTo(0, {screen_height}*{i});')
+        print(i)
         i += 1
-
         time.sleep(scroll_pause_time)
         scroll_height = driver.execute_script('return document.body.scrollHeight;')
-        print(i)
-        if i == 10 or screen_height * i > scroll_height:
+
+        async_to_sync(channel_layer.group_send)(
+            'leonel',
+            {
+                "type": "get_links",
+                "scroll": {
+                    'index': i
+                }
+            }
+        )
+
+        if i == 100 or screen_height * i > scroll_height:
             break
+
     page_source = driver.page_source
     driver.quit()
     return _scrapy(page_source)
@@ -52,11 +63,12 @@ def crawl_tags():
 
     tags = []
 
-    for link in link_elements:
+    for index, link in enumerate(link_elements):
         href = link.attrs['href']
         tag = link.string.split()
 
         tags.append({
+            'id': index + 1,
             'url': prefix + href,
             'tag': ' '.join(tag)
         })

@@ -82,18 +82,19 @@ class LinkAPI(ViewSet):
     @action(methods=['POST'], detail=False)
     def crawl(request):
         try:
-            
-            if request.data['crawl_with_scroll']:
-                links = crawl_with_scroll('https://dev.to/t/security')
+            scroll = request.data['scroll']
+            url = request.data['url']
+            if scroll:
+                links = crawl_with_scroll(url)
             else:
-                links = simple_crawl('https://dev.to/t/security')
+                links = simple_crawl(url)
             return Response(ResponseHandler.success(links), status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
-    @action(methods=['POST'], detail=False)
+    @action(methods=['GET'], detail=False)
     def tags(request):
         try:
             tags = crawl_tags()

@@ -1,5 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {axiosInstance} from "../../utils/axios";
+import {format, formatDistanceToNow, getTime} from 'date-fns';
+
 
 export const addLink = createAsyncThunk("add/link", async ({data}, {rejectWithValue}) => {
         try {
@@ -48,13 +50,33 @@ export const retrieveLink = createAsyncThunk('retrieve/link', async ({id}, {reje
     }
 })
 
+export const getTags = createAsyncThunk('get/tags', async () => {
+    const response = await axiosInstance.get('/links/tags/')
+    console.log(response.data)
+    return response.data
+})
+
+
+export const startCrawl = createAsyncThunk('crawl', async (data, {rejectWithValue}) => {
+       try{
+           const response = await axiosInstance.post('/links/crawl/', data)
+           console.log(response.data)
+           return response.data
+       }catch(e) {
+           return rejectWithValue(e)
+       }
+})
+
 
 const initialState = {
     links: [],
     link: null,
     update: false,
     isSubmitting: false,
-    isDeleting: false
+    isDeleting: false,
+    tags: [],
+    socketData: [],
+    scrollIndex: 0
 };
 
 const slice = createSlice({
@@ -68,6 +90,13 @@ const slice = createSlice({
             resetLink(state, action) {
                 state.update = false
                 state.link = null
+            },
+            setSocketData(state, action) {
+                state.socketData.push(format(new Date(), 'dd MMM yyyy HH:mm'))
+                state.socketData.push(action.payload)
+            },
+            setScrollIndex(state, action) {
+                state.scrollIndex = action.payload
             }
         },
         extraReducers: {
@@ -102,12 +131,30 @@ const slice = createSlice({
                 (state) => {
                     state.isDeleting = false;
                 },
+            [getTags.fulfilled]:
+                (state, action) => {
+                    const {data} = action.payload
+                    state.tags = data;
+                    },
+            [startCrawl.pending]:
+                (state) => {
+                state.isSubmitting = true;
+                },
+            [startCrawl.fulfilled]:
+                (state, action) => {
+                const {data} = action.payload
+                state.isSubmitting = false;
+                },
+            [startCrawl.rejected]:
+                (state) => {
+                state.isSubmitting = false;
+                },
 
         }
         ,
     })
 ;
 
-export const {getLink, resetLink} = slice.actions;
+export const {getLink, resetLink, setSocketData, setScrollIndex} = slice.actions;
 
 export default slice.reducer;

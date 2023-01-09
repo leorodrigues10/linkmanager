@@ -10,6 +10,7 @@ const initialState = {
     isInitialized: false,
     registered: false,
     user: null,
+    message: ''
 }
 
 const handlers = {
@@ -69,27 +70,20 @@ function AuthProvider({children}) {
     const initialize = async () => {
         try {
             const accessToken = JSON.parse(localStorage.getItem('accessToken'));
+            const {user_id, email, name, exp} = jwtDecode(accessToken)
 
-            if (accessToken.token && isValidToken(accessToken)) {
+            if (accessToken && isValidToken(exp)) {
                 setSession(accessToken);
-
-                const response = await axiosInstance.get('/user/info');
-                let {user} = response.data.data;
-
-                if (response.data.data.rating) {
-                    const {rating} = response.data.data
-                    user = {
-                        ...user,
-                        rating
-                    }
-                }
-
 
                 dispatch({
                     type: 'INITIALIZE',
                     payload: {
                         isAuthenticated: true,
-                        user,
+                        user: {
+                            id: user_id,
+                            email,
+                            name
+                        }
                     },
                 });
             } else {
@@ -112,65 +106,40 @@ function AuthProvider({children}) {
         }
     };
 
-    const login = async (name, password) => {
+    const login = async (username, password) => {
         const response = await axiosInstance.post('/login/', {
-            username: name,
+            username,
             password,
         });
 
         let {access, refresh} = response.data;
 
-        const {user_id, email, username, exp} = jwtDecode(access)
+        const {user_id, email, name, exp} = jwtDecode(access)
 
-        setSession({token: access, exp});
-        console.log(user_id, email, username, exp)
+        setSession(access);
+
         dispatch({
             type: 'LOGIN',
             payload: {
                 user: {
                     id: user_id,
                     email,
-                    username
+                    name
                 }
             },
         });
     };
 
-    const loginOnRegister = async (user, token) => {
-
-        setSession(token);
-        dispatch({
-            type: 'LOGIN',
-            payload: {
-                user,
-            },
-        });
-    };
 
     const register = async (data) => {
-        const response = await axiosInstance.post('/user/', data);
 
-        if (data.type === 'Client') {
-            const {token, user} = response.data.data;
-
-            setSession(token)
-            dispatch({
-                type: 'LOGIN',
-                payload: {
-                    user
-                }
-            });
-
-            return;
-        }
-
-        const {msg} = response.data
+        await axiosInstance.post('/auth/register/', data);
 
         dispatch({
             type: 'REGISTER',
             payload: {
                 registered: true,
-                message: msg
+                message: "Utilizador registrado com sucesso, faça o login"
             }
         });
     };
@@ -187,7 +156,6 @@ function AuthProvider({children}) {
                 login,
                 logout,
                 register,
-                loginOnRegister,
                 initialize,
                 dispatch
             }}

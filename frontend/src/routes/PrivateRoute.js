@@ -5,8 +5,6 @@ import Login from "../pages/login";
 function PrivateRoute({children}) {
     const {isAuthenticated, isInitialized} = useAuth()
 
-    console.log(isAuthenticated)
-
     if (!isAuthenticated) {
         return <Navigate to='/auth/login'/>
     }

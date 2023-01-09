@@ -1,14 +1,25 @@
 import {LoadingButton} from "@mui/lab";
-import {Box, Divider, TextField, Typography, useTheme} from "@mui/material";
+import {Box, Divider, Paper, TextField, Typography, useTheme} from "@mui/material";
 import {Stack} from "@mui/system";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {addLink, resetLink, updateLink} from "../../redux/slice/link";
 import {toast} from "react-toastify";
 import Button from "@mui/material/Button";
+import {styled} from "@mui/material/styles";
+
+const Item = styled(Paper)(({theme}) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    marginRight: 2
+}));
 
 function Form() {
     const theme = useTheme()
+
     const dispatch = useDispatch();
     const {isSubmitting, update, link} = useSelector((state) => state.link);
 
@@ -75,80 +86,51 @@ function Form() {
     }, [link]);
 
     return (
-        <Box sx={{p: 2}}>
-            <form onSubmit={onSubmit}>
-                <Typography variant="h5" sx={{mb: 1}}>
-                    Salva o seu link aqui!
-                </Typography>
-                <Stack spacing={2}>
-                    <TextField
-                        style={{color: "#b5b5b5"}}
-                        fullWidth
-                        label="Título"
-                        variant="filled"
-                        name="title"
-                        value={form.title}
-                        onChange={handleFormChange}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Url"
-                        variant="filled"
-                        name="url"
-                        style={{color: "#b5b5b5"}}
-                        value={form.url}
-                        onChange={handleFormChange}
-                    />
-                    {
-                        update && <Button
-                            variant="text"
-                            type="submit"
-                            color="secondary"
-                            onClick={() => dispatch(resetLink())}
-                        >
-                            Cancelar
-                        </Button>
-                    }
-
-                    <LoadingButton
-                        loading={isSubmitting}
-                        variant="contained"
+        <form onSubmit={onSubmit}>
+            <Typography variant="h5" sx={{mb: 1}}>
+                Salva o seu link aqui!
+            </Typography>
+            <Stack spacing={2}>
+                <TextField
+                    style={{color: "#b5b5b5"}}
+                    fullWidth
+                    label="Título"
+                    variant="filled"
+                    name="title"
+                    value={form.title}
+                    onChange={handleFormChange}
+                />
+                <TextField
+                    fullWidth
+                    label="Url"
+                    variant="filled"
+                    name="url"
+                    style={{color: "#b5b5b5"}}
+                    value={form.url}
+                    onChange={handleFormChange}
+                />
+                {
+                    update && <Button
+                        variant="text"
                         type="submit"
                         color="secondary"
+                        onClick={() => dispatch(resetLink())}
                     >
-                        Salvar
-                    </LoadingButton>
-                </Stack>
-            </form>
-            <Divider sx={{my: 5}}>or use</Divider>
-            <form onSubmit={onSubmit}>
-                <Typography variant="h5" sx={{mb: 1}}>
-                    Use web crawler!
-                </Typography>
-                <Stack spacing={2}>
-                    <TextField
-                        style={{color: "#b5b5b5"}}
-                        fullWidth
-                        label="Url"
-                        variant="filled"
-                        name="title"
-                        value={form.title}
-                        onChange={handleFormChange}
-                        helperText="Esta url é a url do blog/site que desejas extrair os links"
-                    />
-                    <LoadingButton
-                        loading={isSubmitting}
-                        variant="contained"
-                        type="submit"
-                        color="secondary"
-                    >
-                        Start
-                    </LoadingButton>
-                </Stack>
-            </form>
+                        Cancelar
+                    </Button>
+                }
 
+                <LoadingButton
+                    loading={isSubmitting}
+                    variant="contained"
+                    type="submit"
+                    color="secondary"
+                >
+                    Salvar
+                </LoadingButton>
+            </Stack>
+        </form>
 
-        </Box>
     );
 }
 
