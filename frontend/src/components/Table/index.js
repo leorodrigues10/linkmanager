@@ -49,9 +49,10 @@ export default function StickyHeadTable() {
             .catch((err) => console.log(err));
     }, [dispatch]);
 
+    
     return (
         <Paper sx={{overflow: "hidden"}}>
-            <TableContainer sx={{maxHeight: 400}}>
+            <TableContainer sx={{maxHeight: 770}}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>

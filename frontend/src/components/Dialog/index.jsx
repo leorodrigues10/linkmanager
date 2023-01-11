@@ -22,7 +22,6 @@ export default function AlertDialogSlide({open, setOpen, link}) {
         setOpen(false);
     };
 
-
     const handleDelete = () => {
         dispatch(deleteLinks({id: link.id}))
             .unwrap()

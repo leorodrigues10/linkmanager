@@ -52,7 +52,6 @@ export const retrieveLink = createAsyncThunk('retrieve/link', async ({id}, {reje
 
 export const getTags = createAsyncThunk('get/tags', async () => {
     const response = await axiosInstance.get('/links/tags/')
-    console.log(response.data)
     return response.data
 })
 
@@ -60,7 +59,6 @@ export const getTags = createAsyncThunk('get/tags', async () => {
 export const startCrawl = createAsyncThunk('crawl', async (data, {rejectWithValue}) => {
        try{
            const response = await axiosInstance.post('/links/crawl/', data)
-           console.log(response.data)
            return response.data
        }catch(e) {
            return rejectWithValue(e)
@@ -94,6 +92,9 @@ const slice = createSlice({
             setSocketData(state, action) {
                 state.socketData.push(format(new Date(), 'dd MMM yyyy HH:mm'))
                 state.socketData.push(action.payload)
+            },
+            resetSocketData(state) {
+               state.socketData = []
             },
             setScrollIndex(state, action) {
                 state.scrollIndex = action.payload
@@ -155,6 +156,6 @@ const slice = createSlice({
     })
 ;
 
-export const {getLink, resetLink, setSocketData, setScrollIndex} = slice.actions;
+export const {getLink, resetLink, setSocketData, setScrollIndex, resetSocketData} = slice.actions;
 
 export default slice.reducer;

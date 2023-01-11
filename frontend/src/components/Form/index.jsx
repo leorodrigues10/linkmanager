@@ -98,6 +98,7 @@ function Form() {
                     variant="filled"
                     name="title"
                     value={form.title}
+                    required
                     onChange={handleFormChange}
                 />
                 <TextField
@@ -107,6 +108,7 @@ function Form() {
                     name="url"
                     style={{color: "#b5b5b5"}}
                     value={form.url}
+                    required
                     onChange={handleFormChange}
                 />
                 {
