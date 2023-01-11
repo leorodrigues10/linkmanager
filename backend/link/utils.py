@@ -13,14 +13,23 @@ prefix = 'https://dev.to'
 channel_layer = get_channel_layer()
 
 
-def simple_crawl(url):
+def simple_crawl(url, username):
     response = requests.get(url)
-    return _scrapy(response.content)
+    return _scrapy(response.content, username)
 
 
-def crawl_with_scroll(url):
+def crawl_with_scroll(url, username):
+
+    send_message(f"processando a página: {url}", username)
+
     options = Options()
-    options.headless = True
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    prefs = {}
+    options.experimental_options["prefs"] = prefs
+    prefs["profile.default_content_settings"] = {"images": 2}
+    driver = webdriver.Chrome(options=options)
     driver = webdriver.Chrome(options=options)
     driver.get(url)
     time.sleep(2)
@@ -29,17 +38,17 @@ def crawl_with_scroll(url):
     screen_height = driver.execute_script('return window.screen.height;')
 
     i = 1
+    send_message(f"scroll iniciado", username)
     while True:
         driver.execute_script(f'window.scrollTo(0, {screen_height}*{i});')
-        print(i)
         i += 1
         time.sleep(scroll_pause_time)
         scroll_height = driver.execute_script('return document.body.scrollHeight;')
 
         async_to_sync(channel_layer.group_send)(
-            'leonel',
+            f'{username}',
             {
-                "type": "get_links",
+                "type": "send_event",
                 "scroll": {
                     'index': i
                 }
@@ -47,20 +56,19 @@ def crawl_with_scroll(url):
         )
 
         if i == 100 or screen_height * i > scroll_height:
+            send_message(f"scroll terminado", username)
             break
 
     page_source = driver.page_source
     driver.quit()
-    return _scrapy(page_source)
+    return _scrapy(page_source, username)
 
 
 def crawl_tags():
     response = requests.get(prefix)
     webpage = BeautifulSoup(response.content, 'html.parser')
     tags_nav = webpage.find(attrs={'id': 'sidebar-nav-default-tags'})
-
     link_elements = tags_nav.find_all('a')
-
     tags = []
 
     for index, link in enumerate(link_elements):
@@ -76,7 +84,8 @@ def crawl_tags():
     return tags
 
 
-def _scrapy(content):
+def _scrapy(content, username):
+    send_message(f"processando os titulos e as urls...", username)
     webpage = BeautifulSoup(content, 'html.parser')
 
     # get all `a` tags that id match with the regex
@@ -99,14 +108,24 @@ def _scrapy(content):
         })
 
         async_to_sync(channel_layer.group_send)(
-            'leonel',
+            f'{username}',
             {
-                "type": "get_links",
+                "type": "send_event",
                 "link": {
                         'title': ' '.join(title),  # join every elements in array title, separate by space
                         'url': prefix + href
                     }
             }
         )
-    print(len(links))
+
     return links
+
+
+def send_message(message, username):
+    async_to_sync(channel_layer.group_send)(
+        f'{username}',
+        {
+            "type": "send_event",
+            "message": message
+        }
+    )

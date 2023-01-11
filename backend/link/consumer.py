@@ -2,7 +2,13 @@ import json
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 
+
 class ChatConsumer(JsonWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.room_name = None
+        self.username = None
+
     def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
         self.room_name = 'room'
@@ -15,24 +21,13 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-       async_to_sync(self.channel_layer.group_discard)(
+        async_to_sync(self.channel_layer.group_discard)(
             self.room_name, self.channel_name
-       )
+        )
 
     def receive_json(self, content, **kwargs):
-          pass
+        pass
 
-    def welcome(self, event):
-        self.send_json({
-            "message": f"Welcome to the group {event['user']}"
-        })
-
-    def broadcast_welcome(self, event):
-        self.send_json({
-            "message": f"{event['user']} join to the chat, say hi"
-        })
-
-
-    def get_links(self, event):
+    def send_event(self, event):
         self.send_json(event)
 

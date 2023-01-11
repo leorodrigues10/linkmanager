@@ -9,15 +9,15 @@ from .utils import simple_crawl, crawl_with_scroll, crawl_tags
 from .serializers import LinkSerializer
 from linksmanagment.response_handler import ResponseHandler
 from rest_framework.permissions import IsAuthenticated
-
+from django.contrib.auth.models import User
 
 class LinkAPI(ViewSet):
     permission_classes = [IsAuthenticated]
     @staticmethod
     def list(request):
-        print(request.user)
         try:
-            links = Link.objects.all()
+            user = User.objects.get(username=request.user)
+            links = Link.objects.filter(user_id=user)
             serializer = LinkSerializer(links, many=True)
             return Response(ResponseHandler.success(serializer.data), status.HTTP_200_OK)
         except Exception as e:
@@ -41,7 +41,13 @@ class LinkAPI(ViewSet):
         try:
             serializer = LinkSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                user = User.objects.get(username=request.user)
+                l = Link()
+                l.url = serializer.data['url']
+                l.title = serializer.data['title']
+                l.user = user
+                l.save()
+                serializer = LinkSerializer(l)
                 return Response(ResponseHandler.success(serializer.data), status.HTTP_201_CREATED)
             return Response(ResponseHandler.error(serializer.errors), status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -84,11 +90,19 @@ class LinkAPI(ViewSet):
         try:
             scroll = request.data['scroll']
             url = request.data['url']
+            username = request.user
             if scroll:
-                links = crawl_with_scroll(url)
+                links = crawl_with_scroll(url, username)
             else:
-                links = simple_crawl(url)
-            return Response(ResponseHandler.success(links), status.HTTP_200_OK)
+                links = simple_crawl(url, username)
+                user = User.objects.get(username=username)
+                for link in links:
+                    l = Link()
+                    l.url = link['url']
+                    l.title = link['title']
+                    l.user = user
+                    l.save()
+            return Response(ResponseHandler.success(None), status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
