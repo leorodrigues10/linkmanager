@@ -85,10 +85,10 @@ ASGI_APPLICATION = 'linksmanagment.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'links',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
         'PORT': 5432,
     }
 }
