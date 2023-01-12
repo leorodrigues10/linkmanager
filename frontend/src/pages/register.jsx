@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import {
@@ -22,6 +22,16 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function Register() {
   const { register, message } = useAuth();
+  const [minLengthMessage, setMinLengthMessage] = useState(
+    "Mínimo 8 caracteres"
+  );
+  const [showMinLengthMessage, setShowMinLengthMessage] = useState(false);
+  const [passwordMatchMessage, setPasswordMactchMessage] = useState(
+    "Passwords não são iguais"
+  );
+  const [showPasswordMatchMessage, setShowPasswordMactchMessage] =
+    useState(false);
+
   const [form, setForm] = useState({
     email: "",
     username: "",
@@ -39,10 +49,20 @@ function Register() {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      register(form);
+      if (form.password.length < 8 && form.password.length > 0) {
+        setShowMinLengthMessage(true);
+        return;
+      }
+
+      if (form.password !== form.password2) {
+        setShowPasswordMactchMessage(true);
+        return;
+      }
+
+      await register(form);
       toast.success("Registro efectuado com sucesso, faça  o login");
     } catch (e) {
       console.log(e.response);
@@ -69,6 +89,7 @@ function Register() {
                 label="Utilizador"
                 variant="filled"
                 name="username"
+                required
                 value={form.username}
                 onChange={handleChange}
               />
@@ -77,6 +98,7 @@ function Register() {
                 label="Email"
                 variant="filled"
                 name="email"
+                required
                 value={form.email}
                 onChange={handleChange}
               />
@@ -85,15 +107,26 @@ function Register() {
                 label="Senha"
                 variant="filled"
                 name="password"
+                type="password"
+                min={8}
+                required
                 value={form.password}
                 onChange={handleChange}
+                error={showMinLengthMessage || showPasswordMatchMessage}
+                helperText={showMinLengthMessage ? minLengthMessage : ""}
               />
               <TextField
                 fullWidth
                 label="Confirmar senha"
                 variant="filled"
                 name="password2"
+                type="password"
+                required
                 value={form.password2}
+                error={showPasswordMatchMessage}
+                helperText={
+                  showPasswordMatchMessage ? passwordMatchMessage : ""
+                }
                 onChange={handleChange}
               />
               <Button type="submit">Registar</Button>

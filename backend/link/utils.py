@@ -42,9 +42,11 @@ def crawl_with_scroll(url, username):
     while True:
         driver.execute_script(f'window.scrollTo(0, {screen_height}*{i});')
         i += 1
+
         time.sleep(scroll_pause_time)
         scroll_height = driver.execute_script('return document.body.scrollHeight;')
 
+        # send the iterator value to the client
         async_to_sync(channel_layer.group_send)(
             f'{username}',
             {
@@ -55,6 +57,7 @@ def crawl_with_scroll(url, username):
             }
         )
 
+        # ends the loop execution if iterator is 100 or reach the end of the page
         if i == 100 or screen_height * i > scroll_height:
             send_message(f"scroll terminado", username)
             break

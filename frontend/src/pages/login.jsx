@@ -72,6 +72,7 @@ function Login() {
               />
               <TextField
                 fullWidth
+                type='password'
                 label="Password"
                 name="password"
                 variant="filled"

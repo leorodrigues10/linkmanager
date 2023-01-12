@@ -27,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
   height: "100%",
-  position: 'relative'
+  position: "relative",
 }));
 
 function Home() {

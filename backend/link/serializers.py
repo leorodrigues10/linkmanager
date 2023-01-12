@@ -5,9 +5,11 @@ from .models import Link
 class LinkSerializer(ModelSerializer):
     class Meta:
         model = Link
-        fields = '__all__'
+        fields = ['id', 'title', 'url', 'created_at', 'updated_at']
         extra_kwargs = {
-            'user': {'read_only': True},
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True},
+            'id': {'read_only': True},
         }
 
 

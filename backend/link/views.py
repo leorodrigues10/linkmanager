@@ -5,15 +5,18 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Link
-from .utils import simple_crawl, crawl_with_scroll, crawl_tags
+from .utils import simple_crawl, crawl_with_scroll, crawl_tags, send_message
 from .serializers import LinkSerializer
 from linksmanagment.response_handler import ResponseHandler
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from drf_yasg.utils import swagger_auto_schema
+
 
 class LinkAPI(ViewSet):
     permission_classes = [IsAuthenticated]
     @staticmethod
+    @swagger_auto_schema(responses={200: LinkSerializer(many=True)})
     def list(request):
         try:
             user = User.objects.get(username=request.user)
@@ -24,6 +27,7 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
+    @swagger_auto_schema(responses={200: LinkSerializer()})
     def retrieve(request, pk):
         try:
             try:
@@ -37,6 +41,7 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
+    @swagger_auto_schema(response_body=LinkSerializer)
     def create(request):
         try:
             serializer = LinkSerializer(data=request.data)
@@ -54,6 +59,7 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
+    @swagger_auto_schema(response_body=LinkSerializer)
     def update(request, pk):
         try:
             try:
@@ -72,7 +78,8 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
-    def delete(request, pk):
+    @swagger_auto_schema()
+    def destroy(request, pk):
         try:
             try:
                 link = Link.objects.get(id=pk)
@@ -95,13 +102,19 @@ class LinkAPI(ViewSet):
                 links = crawl_with_scroll(url, username)
             else:
                 links = simple_crawl(url, username)
-                user = User.objects.get(username=username)
-                for link in links:
+
+            user = User.objects.get(username=username)
+            for link in links:
+                if Link.objects.filter(url=link['url']).exists():
+                    send_message('Link exists', username)
+                else:
                     l = Link()
                     l.url = link['url']
                     l.title = link['title']
                     l.user = user
                     l.save()
+                    send_message('Link saved', username)
+
             return Response(ResponseHandler.success(None), status.HTTP_200_OK)
         except Exception as e:
             print(e)
@@ -115,4 +128,5 @@ class LinkAPI(ViewSet):
             return Response(ResponseHandler.success(tags), status.HTTP_200_OK)
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 

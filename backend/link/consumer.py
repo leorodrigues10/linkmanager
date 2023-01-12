@@ -11,13 +11,11 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
-        self.room_name = 'room'
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.username, self.channel_name
         )
-
         self.accept()
 
     def disconnect(self, close_code):

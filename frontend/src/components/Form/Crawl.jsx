@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Checkbox,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import { InfoRounded } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
@@ -15,6 +16,7 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTags, startCrawl } from "../../redux/slice/link";
+import { toast } from "react-toastify";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -33,7 +35,14 @@ function Crawl() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(startCrawl({ url, scroll }));
+    dispatch(startCrawl({ url, scroll }))
+      .unwrap()
+      .then(() => {
+        toast.success("Links salvados com sucesso!");
+      })
+      .catch(() => {
+        toast.error("Ocorreu um erro!");
+      });
   };
 
   useEffect(() => {
@@ -43,14 +52,18 @@ function Crawl() {
   return (
     <form onSubmit={onSubmit}>
       <Typography variant="h5" sx={{ mb: 1 }}>
-        Use web crawler!
+        Use o web crawler!
       </Typography>
       <Stack aligItems="flex-start">
         <Typography variant="h7" sx={{ textAlign: "start" }}>
-          Choose tag
+          Escolha uma tag
         </Typography>
       </Stack>
       <Stack direction="row" spacing={1} sx={{ p: 1, flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          {!tags.length && <CircularProgress />}
+        </Box>
+
         {tags.map((item) => (
           <span>
             <Chip
