@@ -104,7 +104,7 @@ function AuthProvider({ children }) {
   };
 
   const login = async (username, password) => {
-    const response = await axiosInstance.post("/login/", {
+    const response = await axiosInstance.post("/auth/login/", {
       username,
       password,
     });
