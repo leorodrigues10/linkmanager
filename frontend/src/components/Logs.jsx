@@ -21,7 +21,7 @@ const genSpace = () => {
 const genHashtag = (index) => {
   let hashtag = "";
   for (let i = 1; i <= index; i++) {
-    hashtag += "###";
+    hashtag += "##";
   }
   return hashtag;
 };
@@ -32,7 +32,7 @@ function Log() {
   const dispatch = useDispatch();
   const { socketData, scrollIndex } = useSelector((state) => state.link);
   const { lastJsonMessage, readyState } = useWebSocket(
-    `wss://leomiranda.me/ws/${user.name}/`
+    `http://localhost:8000/ws/${user.name}/`
   );
 
   useEffect(() => {
