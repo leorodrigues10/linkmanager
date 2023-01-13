@@ -58,7 +58,7 @@ def crawl_with_scroll(url, username):
         )
 
         # ends the loop execution if iterator is 100 or reach the end of the page
-        if i == 100 or screen_height * i > scroll_height:
+        if i == 50 or screen_height * i > scroll_height:
             send_message(f"scroll terminado", username)
             break
 
