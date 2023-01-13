@@ -32,6 +32,23 @@ export const deleteLinks = createAsyncThunk(
   }
 );
 
+export const deleteMany = createAsyncThunk(
+  "delete/many",
+  async ({ ids }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`links/delete_many/`, {
+        data: {
+          ids,
+        },
+      });
+      dispatch(getLinks());
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
 export const updateLink = createAsyncThunk(
   "update/link",
   async ({ data, id }, { dispatch, rejectWithValue }) => {
@@ -142,10 +159,18 @@ const slice = createSlice({
       state.isSubmitting = true;
     },
     [startCrawl.fulfilled]: (state, action) => {
-      state.showModal = true;
       state.isSubmitting = false;
     },
     [startCrawl.rejected]: (state) => {
+      state.isSubmitting = false;
+    },
+    [deleteMany.pending]: (state) => {
+      state.isSubmitting = true;
+    },
+    [deleteMany.fulfilled]: (state, action) => {
+      state.isSubmitting = false;
+    },
+    [deleteMany.rejected]: (state) => {
       state.isSubmitting = false;
     },
   },

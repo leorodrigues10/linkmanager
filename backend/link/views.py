@@ -129,4 +129,12 @@ class LinkAPI(ViewSet):
         except Exception as e:
             return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+    @staticmethod
+    @action(methods=['DELETE'], detail=False)
+    def delete_many(request):
+        try:
+            ids = request.data['ids']
+            Link.objects.filter(id__in=ids).delete()
+            return Response(ResponseHandler.success(None), status.HTTP_200_OK)
+        except Exception as e:
+            return Response(ResponseHandler.error(None), status.HTTP_500_INTERNAL_SERVER_ERROR)

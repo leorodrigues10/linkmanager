@@ -21,7 +21,7 @@ const genSpace = () => {
 const genHashtag = (index) => {
   let hashtag = "";
   for (let i = 1; i <= index; i++) {
-    hashtag += "#";
+    hashtag += "###";
   }
   return hashtag;
 };
@@ -68,7 +68,7 @@ function Log() {
     
       {scrollIndex ? (
         <Typography>
-          {`${scrollIndex}/100 - [${genHashtag(scrollIndex)}] ${
+          {`${scrollIndex * 2}/100 - [${genHashtag(scrollIndex)}] ${
             scrollIndex === 100 ? "Done" : ""
           }`}
         </Typography>
