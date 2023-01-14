@@ -61,11 +61,16 @@ function Register() {
         setShowPasswordMactchMessage(true);
         return;
       }
-
       await register(form);
       toast.success("Registro efectuado com sucesso, faça  o login");
+      setForm({
+        email: "",
+        username: "",
+        password: "",
+        password2: "",
+      });
     } catch (e) {
-      console.log(e.response);
+      toast.error("Utilizador não pode ser registrado");
     }
   };
 
@@ -95,6 +100,7 @@ function Register() {
               />
               <TextField
                 fullWidth
+                type="email"
                 label="Email"
                 variant="filled"
                 name="email"
