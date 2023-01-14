@@ -32,7 +32,7 @@ function Log() {
   const dispatch = useDispatch();
   const { socketData, scrollIndex } = useSelector((state) => state.link);
   const { lastJsonMessage, readyState } = useWebSocket(
-    `http://localhost:8000/ws/${user.name}/`
+    `ws://localhost:8000/ws/${user.name}/`
   );
 
   useEffect(() => {

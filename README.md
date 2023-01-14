@@ -26,7 +26,9 @@ Passos para rodar  a api:
 2. navegue para a pasta backend na raiz do projecto
 3. rode comando **docker-compose up -d,** para fazer o *build* da imagem e consequentemente criar o *container*
 4. quando o execução do comando anterior terminar, execute o comando **docker-compose exec web python manage.py migrate** , para radar as *migrations*
+5. Após a execução dos comandos podera acessar api via url [http://localhost:8000]()
 
+   A api pode tambem ser acessado no link [https://leomiranda.me]()
 
 agora que a api está rodando, vamos colacar o frontend para funcionarç
 
@@ -34,10 +36,12 @@ agora que a api está rodando, vamos colacar o frontend para funcionarç
 
 O frontend foi feito em Reactjs.
 
-Para rodar frontend navege para o directório **frontend;**
+Para rodar frontend navege para o directório **frontend** na raiz do projecto**;**
 
 executa o camando **yarn install** para instalar as dependências necessárias para rodar o projecto;
 
 crie o ficheiro **.env** e copie o que esta no ficheiro **.env.example** para **.env;**
 
-executa o comando **yarn start** para iniciar o projecto
+executa o comando **yarn start** para iniciar o projecto, depois pode acessar a aplicação na url http://localhost:3000
+
+Também pode ser acessado na url [https://linkmanager-webcrawler.netlify.app]()

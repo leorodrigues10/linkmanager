@@ -282,7 +282,8 @@ export default function DataTable() {
                         <Stack direction="row">
                           <Tooltip title="Open in new window">
                             <IconButton
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 window.open(row.url, "_blank");
                               }}
                             >
@@ -291,7 +292,8 @@ export default function DataTable() {
                           </Tooltip>
                           <Tooltip title="Edit">
                             <IconButton
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 dispatch(getLink(row));
                               }}
                             >
@@ -300,7 +302,8 @@ export default function DataTable() {
                           </Tooltip>
                           <Tooltip title="Delete">
                             <IconButton
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setLink(row);
                                 setOpen(true);
                                 dispatch(resetLink());
